@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { SiteFrame } from "../../components/SiteFrame";
 import { findWriting, writings } from "../../generated-writings";
 
@@ -23,13 +24,13 @@ export async function generateMetadata({ params }: WritingPageProps): Promise<Me
 export default async function WritingReaderPage({ params }: WritingPageProps) {
   const writing = findWriting((await params).slug);
   if (!writing) {
-    return <SiteFrame active="WRITING"><section className="readerMissing"><p>THIS NOTE DOES NOT EXIST.</p><a href="/writing/">BACK TO WRITING ←</a></section></SiteFrame>;
+    return <SiteFrame active="WRITING"><section className="readerMissing"><p>THIS NOTE DOES NOT EXIST.</p><Link href="/writing/">BACK TO WRITING ←</Link></section></SiteFrame>;
   }
   return (
-    <SiteFrame active="WRITING">
+    <SiteFrame active="WRITING" alternateHref={`/zh/writing/${writing.slug}/`}>
       <article className="reader">
         <header className="readerHeader">
-          <a href="/writing/">← ALL WRITINGS</a>
+          <Link href="/writing/">← ALL WRITINGS</Link>
           <p>{writing.category} · {writing.date} · {writing.readingTime} MIN READ</p>
           <h1>{writing.title}</h1>
           <p className="readerDek">{writing.description}</p>

@@ -12,6 +12,12 @@ const routes = [
   ["/work/", "work/index.html"],
   ["/writing/", "writing/index.html"],
   ...writings.map(({ slug }) => [`/writing/${slug}/`, `writing/${slug}/index.html`]),
+  ["/zh/", "zh/index.html"],
+  ["/zh/about/", "zh/about/index.html"],
+  ["/zh/experience/", "zh/experience/index.html"],
+  ["/zh/work/", "zh/work/index.html"],
+  ["/zh/writing/", "zh/writing/index.html"],
+  ...writings.map(({ slug }) => [`/zh/writing/${slug}/`, `zh/writing/${slug}/index.html`]),
 ];
 
 await Promise.all([

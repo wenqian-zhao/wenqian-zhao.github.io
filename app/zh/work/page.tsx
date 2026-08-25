@@ -1,0 +1,11 @@
+import type { Metadata } from "next";
+import { SiteFrame } from "../../components/SiteFrame";
+import { earlierBuilds } from "../../site-data";
+
+export const metadata: Metadata = { title: "代表项目 — 赵文茜", description: "赵文茜在大模型数据工程、评测和机器学习领域的代表项目。", openGraph: { title: "代表项目 — 赵文茜", description: "模型、数据和有用的问题。", images: [] }, twitter: { card: "summary", title: "代表项目 — 赵文茜", description: "模型、数据和有用的问题。", images: [] } };
+const projects = [
+  { number: "01", company: "蚂蚁集团 · 2026.04 — 2026.07", title: "LLaDA 后训练数据与推理探索", summary: "诊断 160 万条开源 SFT 数据中的 loss spike，为扩散语言模型适配推理蒸馏，并探索数据分布和推理策略之间的权衡。", result: "目标分布实验中，代码与数学 benchmark 提升 3%–5%。", mark: "∿", tone: "violet" },
+  { number: "02", company: "蚂蚁集团 · 2025.12 — 2026.01", title: "医疗模型记忆能力的 RL 数据", summary: "把不可直接验证的个性化问题转化为可衡量的训练规范、34 个场景，以及 must / optional / overthink 的 rubric 体系。", result: "交付 10,000+ 组用于 RL 的 Query–Rubric 训练数据。", mark: "✣", tone: "peach" },
+  { number: "03", company: "MINIMAX · 2025.03 — 2025.07", title: "MiniMax-M2 预训练数据策略", summary: "构建多维质量框架和多标签 reward model，用于 TB 级 Common Crawl 标注，并通过消融实验调整质量与领域采样。", result: "AUC > 0.95；多个 benchmark 提升 5%–10%。", mark: "◎", tone: "green" },
+];
+export default function ChineseWorkPage() { return <SiteFrame active="WORK" locale="zh"><section className="pageIntro"><p className="eyebrow">03 / 代表项目</p><h1>让数据<br /><em>真正发挥作用。</em></h1><p>把简历中的代表工作整理成简短案例：问题、方法和结果。</p></section><section className="caseSection"><div className="sectionRail"><span>职业项目</span><span>01 — 03</span></div><div className="caseGrid">{projects.map((project) => <article className={`caseCard ${project.tone}`} key={project.title}><div className="caseMeta"><span>{project.number}</span><span>{project.company}</span></div><i aria-hidden="true">{project.mark}</i><h2>{project.title}</h2><p>{project.summary}</p><strong>{project.result}</strong></article>)}</div></section><section className="buildSection"><div><p className="sectionNumber">B / 早期项目</p><h2>在基础模型<br /><em>成为主角以前。</em></h2></div><div className="buildList">{earlierBuilds.map((item, index) => <a href={item.href} target="_blank" rel="noreferrer" key={item.title}><span>{String(index + 1).padStart(2, "0")}</span><div><h3>{item.title}</h3><p>{item.meta}</p></div><span>↗</span></a>)}</div></section></SiteFrame>; }

@@ -15,7 +15,7 @@ a { color: inherit; text-decoration: none; }
 .wordmark span { font-size: 5px; letter-spacing: .16em; }.wordmark strong { font-family: Georgia, serif; font-size: 18px; font-weight: 400; line-height: 1; }
 .siteNav { display: flex; justify-content: center; gap: clamp(18px, 4vw, 58px); font-size: 9px; letter-spacing: .16em; }
 .siteNav a { padding: 7px 0; border-bottom: 1px solid transparent; }.siteNav a:hover, .siteNav a[aria-current="page"] { border-color: currentColor; }
-.themeLabel { justify-self: end; display: flex; align-items: center; gap: 10px; font-size: 8px; letter-spacing: .16em; cursor: pointer; }.themeLabel span { width: 8px; height: 8px; background: currentColor; }
+.headerActions { justify-self: end; display: flex; align-items: center; gap: 18px; }.languageLink { padding: 6px 0; border-bottom: 1px solid currentColor; font-size: 8px; letter-spacing: .12em; }.themeLabel { display: flex; align-items: center; gap: 10px; font-size: 8px; letter-spacing: .16em; cursor: pointer; white-space: nowrap; }.themeLabel span { width: 8px; height: 8px; background: currentColor; }
 
 .homeHero { min-height: calc(100svh - 88px); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 28px; text-align: center; }
 .eyebrow { font-family: var(--font-geist-mono), monospace; font-size: 9px; letter-spacing: .19em; }
@@ -23,6 +23,7 @@ a { color: inherit; text-decoration: none; }
 .homeHero h1 { max-width: 1050px; margin: 65px 0 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(44px, 6.3vw, 92px); font-weight: 400; line-height: .98; letter-spacing: -.055em; }
 .homeHero h1 em { font-weight: 400; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 9px; }
 .homeIntro { margin: 30px 0 0; font-family: var(--font-geist-mono), monospace; font-size: 9px; letter-spacing: .18em; }
+.site[lang="zh-CN"] .homeHero h1 { max-width: 920px; font-size: clamp(40px, 5.4vw, 76px); line-height: 1.12; letter-spacing: -.045em; }.site[lang="zh-CN"] .pageIntro h1 { line-height: .96; }.site[lang="zh-CN"] .pageIntro > p:last-child, .site[lang="zh-CN"] .timelineBody > p, .site[lang="zh-CN"] .caseCard > p { font-family: Georgia, "Songti SC", "STSong", serif; font-style: normal; }
 .scrollCue { display: flex; gap: 30px; margin-top: 78px; padding-bottom: 8px; border-bottom: 1px solid currentColor; font-family: var(--font-geist-mono), monospace; font-size: 8px; letter-spacing: .16em; }.scrollCue span { font-size: 14px; }
 
 .roomSection { border-top: 1px solid var(--ink); }.sectionRail { display: flex; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid var(--ink); font-family: var(--font-geist-mono), monospace; font-size: 8px; letter-spacing: .18em; }.roomGrid { display: grid; grid-template-columns: repeat(4, 1fr); }
@@ -82,7 +83,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 @media (max-width: 850px) {
-  .siteHeader { grid-template-columns: 70px 1fr 70px; padding: 12px 18px; }.siteNav { gap: 18px; }.siteNav a:nth-child(2) { display: none; }
+  .siteHeader { grid-template-columns: 70px 1fr auto; padding: 12px 18px; }.siteNav { gap: 18px; }.siteNav a:nth-child(2) { display: none; }
   .roomGrid { grid-template-columns: repeat(2, 1fr); }.roomCard:nth-child(2) { border-right: 0; }.roomCard:nth-child(-n+2) { border-bottom: 1px solid var(--ink); }
   .pageIntro { grid-template-columns: 1fr; gap: 45px; min-height: 580px; }.pageIntro h1 { font-size: 72px; }.aboutIntro h1 { font-size: 62px; }.pageIntro > p:last-child { max-width: 430px; }
   .verticalTimeline article { grid-template-columns: 55px 130px 1fr; }.timelineMark { display: none; }.timelineBody > div { flex-direction: column; }
@@ -90,7 +91,7 @@ a { color: inherit; text-decoration: none; }
   .caseGrid { grid-template-columns: 1fr; }.caseCard { min-height: 570px; border-right: 0; border-bottom: 1px solid var(--ink); }.caseCard:last-child { border-bottom: 0; }.buildSection { grid-template-columns: 1fr; }
 }
 @media (max-width: 580px) {
-  .siteHeader { min-height: 80px; grid-template-columns: 62px 1fr; }.siteNav { justify-content: flex-end; gap: 14px; font-size: 7px; }.siteNav a:nth-child(2), .siteNav a:nth-child(4) { display: none; }.themeLabel { display: none; }.wordmark { width: 54px; height: 54px; }
+  .siteHeader { min-height: 80px; grid-template-columns: 62px 1fr auto; gap: 10px; }.siteNav { justify-content: flex-end; gap: 14px; font-size: 7px; }.siteNav a:nth-child(2), .siteNav a:nth-child(4) { display: none; }.themeLabel { display: none; }.headerActions { gap: 0; }.languageLink { font-size: 7px; }.wordmark { width: 54px; height: 54px; }
   .homeHero { min-height: calc(100svh - 80px); }.homeHero h1 { font-size: 47px; }.homeIntro { line-height: 1.6; }.roomGrid { grid-template-columns: 1fr; }.roomCard { min-height: 360px; border-right: 0; border-bottom: 1px solid var(--ink); }.roomCard:last-child { border-bottom: 0; }
   .pageIntro { min-height: 500px; padding-top: 70px; }.pageIntro h1 { font-size: 67px; }
   .verticalTimeline { padding: 20px 20px 90px; }.verticalTimeline article { grid-template-columns: 42px 1fr; padding-bottom: 35px; }.timelineDate { grid-column: 2; margin-top: 30px; }.timelineAxis { grid-row: 1 / span 2; }.timelineBody { grid-column: 2; padding: 20px 0 10px; border-left: 0; }.timelineBody h2 { font-size: 42px; }.timelineBody > p { font-size: 16px; }

@@ -11,6 +11,12 @@ const routes = [
   ["/work", /PROFESSIONAL CASES/],
   ["/writing", /ORIGINAL WORDPRESS SITE/],
   ...writings.map((writing) => [`/writing/${writing.slug}`, new RegExp(writing.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))]),
+  ["/zh", /选择一扇门/],
+  ["/zh/about", /我为语言模型/],
+  ["/zh/experience", /走过的/],
+  ["/zh/work", /职业项目/],
+  ["/zh/writing", /原 WORDPRESS 网站/],
+  ...writings.map((writing) => [`/zh/writing/${writing.slug}`, new RegExp(writing.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))]),
 ];
 
 async function loadWorker() {
@@ -58,6 +64,21 @@ test("writing detail metadata is derived from every Markdown file", async () => 
     assert.match(html, new RegExp(`<title>${writing.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} — Wenqian Zhao<\\/title>`), writing.slug);
     assert.match(html, /class="markdownBody"/, writing.slug);
     assert.doesNotMatch(html, /og:image|twitter:image/, writing.slug);
+  }
+});
+
+test("Chinese writing routes provide localized metadata and the same complete articles", async () => {
+  const worker = await loadWorker();
+  for (const writing of writings) {
+    const response = await worker.fetch(
+      new Request(`http://localhost/zh/writing/${writing.slug}`, { headers: { accept: "text/html" } }),
+      { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+      { waitUntil() {}, passThroughOnException() {} },
+    );
+    const html = await response.text();
+    assert.match(html, new RegExp(`<title>${writing.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} — 赵文茜<\\/title>`), writing.slug);
+    assert.match(html, /阅读约[\s\S]{0,100}分钟/, writing.slug);
+    assert.match(html, /class="markdownBody"/, writing.slug);
   }
 });
 
