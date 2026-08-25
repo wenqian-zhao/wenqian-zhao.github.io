@@ -65,20 +65,17 @@ test("every public route includes the headless meteor trail", async () => {
     assert.match(html, /class="pointerField"/, path);
     assert.doesNotMatch(html, /class="meteorHead"/, path);
     assert.equal((html.match(/class="meteorTail"/g) ?? []).length, 5, path);
-    assert.match(html, /src="\/pointer-field\.js\?v=meteor-2"/, path);
+    assert.match(html, /src="\/pointer-field\.js\?v=path-1"/, path);
   }
 });
 
-test("the meteor trail follows movement, fades after idle, and clears on leave", async () => {
+test("the meteor trail samples the exact historic path, fades after idle, and clears on leave", async () => {
   const listeners = {};
   const rootListeners = {};
   const field = { dataset: {} };
-  const tail = Array.from({ length: 5 }, () => ({ style: {} }));
-  let frame;
+  const tail = Array.from({ length: 5 }, () => ({ style: {}, dataset: {} }));
   let idleCallback;
   const window = {
-    innerWidth: 1200,
-    innerHeight: 800,
     matchMedia: () => ({ matches: false }),
     addEventListener: (type, handler) => { listeners[type] = handler; },
   };
@@ -91,25 +88,28 @@ test("the meteor trail follows movement, fades after idle, and clears on leave",
   runInNewContext(source, {
     window,
     document,
-    requestAnimationFrame: (callback) => { frame = callback; return 1; },
     setTimeout: (callback) => { idleCallback = callback; return 1; },
     clearTimeout: () => {},
     Math,
   });
 
-  listeners.pointermove({ clientX: 240, clientY: 180 });
+  listeners.pointermove({ clientX: 0, clientY: 0 });
   assert.equal(field.dataset.visible, "true");
-  listeners.pointermove({ clientX: 400, clientY: 320 });
-  frame();
-  assert.match(tail[0].style.transform, /^translate3d\(/);
-  assert.match(tail[4].style.transform, /^translate3d\(/);
-  assert.notEqual(tail[0].style.transform, tail[4].style.transform);
+  listeners.pointermove({ clientX: 100, clientY: 0 });
+  listeners.pointermove({ clientX: 100, clientY: 100 });
+  assert.deepEqual(tail.map((square) => square.style.transform), [
+    "translate3d(100px, 82px, 0)",
+    "translate3d(100px, 60px, 0)",
+    "translate3d(100px, 34px, 0)",
+    "translate3d(100px, 4px, 0)",
+    "translate3d(70px, 0px, 0)",
+  ]);
+  assert.deepEqual(tail.map((square) => square.dataset.ready), ["true", "true", "true", "true", "true"]);
   idleCallback();
   assert.equal(field.dataset.visible, "false");
-  listeners.pointermove({ clientX: 410, clientY: 325 });
-  assert.equal(field.dataset.visible, "true");
   rootListeners.mouseleave();
   assert.equal(field.dataset.visible, "false");
+  assert.deepEqual(tail.map((square) => square.dataset.ready), ["false", "false", "false", "false", "false"]);
 });
 
 test("every Chinese route uses the correct name", async () => {

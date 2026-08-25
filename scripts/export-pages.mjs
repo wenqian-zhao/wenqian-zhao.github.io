@@ -58,7 +58,7 @@ function makeStatic(html) {
     .replace(/<link\b(?=[^>]*rel=["']modulepreload["'])[^>]*>/gi, "")
     .replace(/\sdata-rsc-css-href=["'][^"']*["']/gi, "");
   return staticHtml.includes('class="pointerField"')
-    ? staticHtml.replace("</body>", '<script src="/pointer-field.js?v=meteor-2" defer></script></body>')
+    ? staticHtml.replace("</body>", '<script src="/pointer-field.js?v=path-1" defer></script></body>')
     : staticHtml;
 }
 
