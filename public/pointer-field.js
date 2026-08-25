@@ -1,14 +1,15 @@
 (() => {
-  if (window.__wzMeteorTrailV1) return;
-  window.__wzMeteorTrailV1 = true;
+  if (window.__wzMeteorTrailV2) return;
+  window.__wzMeteorTrailV2 = true;
   if (window.matchMedia("(pointer: coarse), (prefers-reduced-motion: reduce)").matches) return;
   const field = document.querySelector(".pointerField");
-  const head = document.querySelector(".meteorHead");
   const tail = [...document.querySelectorAll(".meteorTail")];
-  if (!field || !head || !tail.length) return;
+  if (!field || !tail.length) return;
 
   let targetX = window.innerWidth / 2;
   let targetY = window.innerHeight / 2;
+  let initialized = false;
+  let idleTimer;
   const easing = [0.34, 0.24, 0.17, 0.12, 0.085];
   const positions = tail.map(() => ({ x: targetX, y: targetY }));
 
@@ -24,10 +25,16 @@
   window.addEventListener("pointermove", (event) => {
     targetX = event.clientX;
     targetY = event.clientY;
-    head.style.transform = `translate3d(${targetX}px, ${targetY}px, 0)`;
+    if (!initialized) {
+      positions.forEach((position) => { position.x = targetX; position.y = targetY; });
+      initialized = true;
+    }
     field.dataset.visible = "true";
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => { field.dataset.visible = "false"; }, 240);
   }, { passive: true });
   document.documentElement.addEventListener("mouseleave", () => {
+    clearTimeout(idleTimer);
     field.dataset.visible = "false";
   });
   requestAnimationFrame(render);

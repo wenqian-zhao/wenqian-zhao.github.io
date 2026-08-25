@@ -1,5 +1,4 @@
 import { SiteFrame } from "./components/SiteFrame";
-import { PointerField } from "./components/PointerField";
 
 const rooms = [
   { number: "01", title: "About", note: "The person behind the datasets.", href: "/about/", tone: "violet", mark: "✳" },
@@ -11,7 +10,6 @@ const rooms = [
 export default function Home() {
   return (
     <SiteFrame active="HOME">
-      <PointerField />
       <section className="homeHero">
         <p className="eyebrow"><i /> WENQIAN IS ONLINE · 2026</p>
         <h1>I work with <em>data, models,</em><br />and the questions around them.</h1>

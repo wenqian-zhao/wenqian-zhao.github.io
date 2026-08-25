@@ -53,9 +53,9 @@ test("detail pages provide distinct document titles", async () => {
   }
 });
 
-test("both home pages include the pointer-driven motion layer", async () => {
+test("every public route includes the headless meteor trail", async () => {
   const worker = await loadWorker();
-  for (const path of ["/", "/zh"]) {
+  for (const [path] of routes) {
     const response = await worker.fetch(
       new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }),
       { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
@@ -63,19 +63,19 @@ test("both home pages include the pointer-driven motion layer", async () => {
     );
     const html = await response.text();
     assert.match(html, /class="pointerField"/, path);
-    assert.match(html, /class="meteorHead"/, path);
+    assert.doesNotMatch(html, /class="meteorHead"/, path);
     assert.equal((html.match(/class="meteorTail"/g) ?? []).length, 5, path);
-    assert.match(html, /src="\/pointer-field\.js\?v=meteor-1"/, path);
+    assert.match(html, /src="\/pointer-field\.js\?v=meteor-2"/, path);
   }
 });
 
-test("the meteor trail follows pointer movement and clears on leave", async () => {
+test("the meteor trail follows movement, fades after idle, and clears on leave", async () => {
   const listeners = {};
   const rootListeners = {};
   const field = { dataset: {} };
-  const head = { style: {} };
   const tail = Array.from({ length: 5 }, () => ({ style: {} }));
   let frame;
+  let idleCallback;
   const window = {
     innerWidth: 1200,
     innerHeight: 800,
@@ -83,7 +83,7 @@ test("the meteor trail follows pointer movement and clears on leave", async () =
     addEventListener: (type, handler) => { listeners[type] = handler; },
   };
   const document = {
-    querySelector: (selector) => selector === ".pointerField" ? field : selector === ".meteorHead" ? head : null,
+    querySelector: (selector) => selector === ".pointerField" ? field : null,
     querySelectorAll: () => tail,
     documentElement: { addEventListener: (type, handler) => { rootListeners[type] = handler; } },
   };
@@ -92,16 +92,22 @@ test("the meteor trail follows pointer movement and clears on leave", async () =
     window,
     document,
     requestAnimationFrame: (callback) => { frame = callback; return 1; },
+    setTimeout: (callback) => { idleCallback = callback; return 1; },
+    clearTimeout: () => {},
     Math,
   });
 
   listeners.pointermove({ clientX: 240, clientY: 180 });
   assert.equal(field.dataset.visible, "true");
-  assert.equal(head.style.transform, "translate3d(240px, 180px, 0)");
+  listeners.pointermove({ clientX: 400, clientY: 320 });
   frame();
   assert.match(tail[0].style.transform, /^translate3d\(/);
   assert.match(tail[4].style.transform, /^translate3d\(/);
   assert.notEqual(tail[0].style.transform, tail[4].style.transform);
+  idleCallback();
+  assert.equal(field.dataset.visible, "false");
+  listeners.pointermove({ clientX: 410, clientY: 325 });
+  assert.equal(field.dataset.visible, "true");
   rootListeners.mouseleave();
   assert.equal(field.dataset.visible, "false");
 });

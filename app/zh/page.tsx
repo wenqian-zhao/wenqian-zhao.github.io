@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { SiteFrame } from "../components/SiteFrame";
-import { PointerField } from "../components/PointerField";
 
 export const metadata: Metadata = {
   title: "赵文千 — 大模型数据工程师与写作者",
@@ -19,7 +18,6 @@ const rooms = [
 export default function ChineseHome() {
   return (
     <SiteFrame active="HOME" locale="zh">
-      <PointerField />
       <section className="homeHero">
         <p className="eyebrow"><i /> WENQIAN 在线 · 2026</p>
         <h1>把模型的问题，<br />变成<em>数据能回答的问题。</em></h1>
