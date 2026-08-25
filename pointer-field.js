@@ -1,42 +1,43 @@
 (() => {
   if (window.matchMedia("(pointer: coarse), (prefers-reduced-motion: reduce)").matches) return;
-  const glow = document.querySelector(".pointerGlow");
-  const orbit = document.querySelector(".pointerOrbit");
-  if (!glow || !orbit) return;
+  const field = document.querySelector(".pointerField");
+  const core = document.querySelector(".pixelCore");
+  const squares = [...document.querySelectorAll(".pixelSquare")];
+  if (!field || !core || !squares.length) return;
 
   let targetX = window.innerWidth / 2;
   let targetY = window.innerHeight / 2;
-  let glowX = targetX;
-  let glowY = targetY;
-  let orbitX = targetX;
-  let orbitY = targetY;
+  let burstTimer;
+  const offsets = [[-18, -17], [17, -22], [24, 7], [-27, 10], [4, 24], [-8, -31], [33, -11], [-35, -7], [14, 32]];
+  const easing = [0.5, 0.42, 0.36, 0.31, 0.27, 0.23, 0.2, 0.17, 0.14];
+  const positions = squares.map(() => ({ x: targetX, y: targetY }));
 
   const render = () => {
-    glowX += (targetX - glowX) * 0.16;
-    glowY += (targetY - glowY) * 0.16;
-    orbitX += (targetX - orbitX) * 0.08;
-    orbitY += (targetY - orbitY) * 0.08;
-    glow.style.transform = `translate3d(${glowX}px, ${glowY}px, 0)`;
-    orbit.style.transform = `translate3d(${orbitX}px, ${orbitY}px, 0)`;
+    positions.forEach((position, index) => {
+      const [offsetX, offsetY] = offsets[index];
+      position.x += (targetX + offsetX - position.x) * easing[index];
+      position.y += (targetY + offsetY - position.y) * easing[index];
+      squares[index].style.transform = `translate3d(${Math.round(position.x)}px, ${Math.round(position.y)}px, 0)`;
+    });
     requestAnimationFrame(render);
   };
 
   window.addEventListener("pointermove", (event) => {
     targetX = event.clientX;
     targetY = event.clientY;
-    glow.dataset.visible = "true";
-    orbit.dataset.visible = "true";
+    core.style.transform = `translate3d(${targetX}px, ${targetY}px, 0)`;
+    field.dataset.visible = "true";
   }, { passive: true });
   document.addEventListener("pointerover", (event) => {
-    orbit.dataset.hover = event.target.closest?.("a") ? "true" : "false";
+    field.dataset.hover = event.target.closest?.("a") ? "true" : "false";
   }, { passive: true });
-  document.addEventListener("pointerdown", () => orbit.animate(
-    [{ scale: "1" }, { scale: "1.55", rotate: "25deg" }, { scale: "1" }],
-    { duration: 520, easing: "cubic-bezier(.16,1,.3,1)" },
-  ), { passive: true });
+  document.addEventListener("pointerdown", () => {
+    field.dataset.burst = "true";
+    clearTimeout(burstTimer);
+    burstTimer = setTimeout(() => { field.dataset.burst = "false"; }, 430);
+  }, { passive: true });
   document.documentElement.addEventListener("mouseleave", () => {
-    glow.dataset.visible = "false";
-    orbit.dataset.visible = "false";
+    field.dataset.visible = "false";
   });
   requestAnimationFrame(render);
 })();

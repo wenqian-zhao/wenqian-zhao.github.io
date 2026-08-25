@@ -60,7 +60,10 @@ test("both home pages include the pointer-driven motion layer", async () => {
       { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
       { waitUntil() {}, passThroughOnException() {} },
     );
-    assert.match(await response.text(), /class="pointerField"/, path);
+    const html = await response.text();
+    assert.match(html, /class="pointerField"/, path);
+    assert.match(html, /class="pixelCore"/, path);
+    assert.equal((html.match(/class="pixelSquare"/g) ?? []).length, 9, path);
   }
 });
 
