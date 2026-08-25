@@ -63,21 +63,19 @@ test("both home pages include the pointer-driven motion layer", async () => {
     );
     const html = await response.text();
     assert.match(html, /class="pointerField"/, path);
-    assert.match(html, /class="pixelCore"/, path);
-    assert.equal((html.match(/class="pixelSquare"/g) ?? []).length, 9, path);
-    assert.match(html, /src="\/pointer-field\.js\?v=pixel-2"/, path);
+    assert.match(html, /class="meteorHead"/, path);
+    assert.equal((html.match(/class="meteorTail"/g) ?? []).length, 5, path);
+    assert.match(html, /src="\/pointer-field\.js\?v=meteor-1"/, path);
   }
 });
 
-test("the pixel-motion script responds to move, hover, and click", async () => {
+test("the meteor trail follows pointer movement and clears on leave", async () => {
   const listeners = {};
-  const documentListeners = {};
   const rootListeners = {};
   const field = { dataset: {} };
-  const core = { style: {} };
-  const squares = Array.from({ length: 9 }, () => ({ style: {} }));
+  const head = { style: {} };
+  const tail = Array.from({ length: 5 }, () => ({ style: {} }));
   let frame;
-  let timer;
   const window = {
     innerWidth: 1200,
     innerHeight: 800,
@@ -85,9 +83,8 @@ test("the pixel-motion script responds to move, hover, and click", async () => {
     addEventListener: (type, handler) => { listeners[type] = handler; },
   };
   const document = {
-    querySelector: (selector) => selector === ".pointerField" ? field : selector === ".pixelCore" ? core : null,
-    querySelectorAll: () => squares,
-    addEventListener: (type, handler) => { documentListeners[type] = handler; },
+    querySelector: (selector) => selector === ".pointerField" ? field : selector === ".meteorHead" ? head : null,
+    querySelectorAll: () => tail,
     documentElement: { addEventListener: (type, handler) => { rootListeners[type] = handler; } },
   };
   const source = await readFile(new URL("../public/pointer-field.js", import.meta.url), "utf8");
@@ -95,22 +92,16 @@ test("the pixel-motion script responds to move, hover, and click", async () => {
     window,
     document,
     requestAnimationFrame: (callback) => { frame = callback; return 1; },
-    setTimeout: (callback) => { timer = callback; return 1; },
-    clearTimeout: () => {},
     Math,
   });
 
   listeners.pointermove({ clientX: 240, clientY: 180 });
   assert.equal(field.dataset.visible, "true");
-  assert.equal(core.style.transform, "translate3d(240px, 180px, 0)");
+  assert.equal(head.style.transform, "translate3d(240px, 180px, 0)");
   frame();
-  assert.match(squares[0].style.transform, /^translate3d\(/);
-  documentListeners.pointerover({ target: { closest: () => ({}) } });
-  assert.equal(field.dataset.hover, "true");
-  documentListeners.pointerdown();
-  assert.equal(field.dataset.burst, "true");
-  timer();
-  assert.equal(field.dataset.burst, "false");
+  assert.match(tail[0].style.transform, /^translate3d\(/);
+  assert.match(tail[4].style.transform, /^translate3d\(/);
+  assert.notEqual(tail[0].style.transform, tail[4].style.transform);
   rootListeners.mouseleave();
   assert.equal(field.dataset.visible, "false");
 });
