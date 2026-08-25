@@ -71,7 +71,7 @@ test("every public route includes the headless meteor trail", async () => {
   }
 });
 
-test("the trail and page palette keep their deliberate visual rhythm", async () => {
+test("the trail keeps its rhythm while the site palette stays deliberately limited", async () => {
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   const expectedSizes = [6, 8, 10, 12, 13, 12, 10, 8, 6];
   const actualSizes = [
@@ -79,13 +79,15 @@ test("the trail and page palette keep their deliberate visual rhythm", async () 
     ...Array.from({ length: 8 }, (_, index) => Number(css.match(new RegExp(`\\.meteorTail:nth-of-type\\(${index + 2}\\) \\{[^}]*width: (\\d+)px`))[1])),
   ];
   assert.deepEqual(actualSizes, expectedSizes);
-  assert.match(css, /--gold: #d8c79e; --rose: #d8b8bb;/);
-  assert.match(css, /\.site\[data-section="ABOUT"\]/);
-  assert.match(css, /\.pageIntro \{ background: color-mix/);
-  assert.match(css, /\.verticalTimeline article \{ --timeline-tone:/);
-  assert.match(css, /\.articleRow \{ --row-tone:/);
-  assert.match(css, /\.readerHeader \{ background: color-mix/);
-  assert.match(css, /\.siteFooter \{ background: color-mix/);
+  assert.match(css, /--accent: #607f9b; --accent-soft: var\(--blue\);/);
+  assert.match(css, /\.pageIntro \{ background: color-mix\(in srgb, var\(--accent-soft\) 18%/);
+  assert.match(css, /\.caseCard::before \{ background: var\(--accent-soft\); \}/);
+  assert.doesNotMatch(css, /--gold:|--rose:|\.site\[data-section="ABOUT"\]/);
+  assert.doesNotMatch(css, /\.aboutLead \{ background:/);
+  assert.doesNotMatch(css, /\.verticalTimeline article \{[^}]*background:/);
+  assert.doesNotMatch(css, /\.articleRow \{[^}]*background:/);
+  assert.doesNotMatch(css, /\.readerHeader \{[^}]*background:/);
+  assert.doesNotMatch(css, /\.siteFooter \{[^}]*background:/);
 });
 
 test("the meteor trail elastically catches up along the exact historic path", async () => {
