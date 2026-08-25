@@ -17,7 +17,7 @@ export function SiteFrame({ active, children, locale = "en", alternateHref }: { 
   return (
     <>
       <input className="themeSwitch" id="theme-switch" type="checkbox" aria-label={isChinese ? "切换颜色主题" : "Switch color theme"} />
-      <main className="site" lang={isChinese ? "zh-CN" : "en"}>
+      <main className="site" data-section={active} lang={isChinese ? "zh-CN" : "en"}>
         <header className="siteHeader">
           <a className="wordmark" href={isChinese ? "/zh/" : "/"} aria-label={isChinese ? "赵文千，首页" : "Wenqian Zhao, home"}><span>WENQIAN</span><strong>WZ</strong><span>ZHAO</span></a>
           <nav className="siteNav" aria-label={isChinese ? "主导航" : "Primary navigation"}>

@@ -66,7 +66,26 @@ test("every public route includes the headless meteor trail", async () => {
     assert.doesNotMatch(html, /class="meteorHead"/, path);
     assert.equal((html.match(/class="meteorTail"/g) ?? []).length, 9, path);
     assert.match(html, /src="\/pointer-field\.js\?v=flow-1"/, path);
+    const section = path === "/" || path === "/zh" ? "HOME" : path.includes("about") ? "ABOUT" : path.includes("experience") ? "EXPERIENCE" : path.includes("work") ? "WORK" : "WRITING";
+    assert.match(html, new RegExp(`data-section="${section}"`), path);
   }
+});
+
+test("the trail and page palette keep their deliberate visual rhythm", async () => {
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  const expectedSizes = [6, 8, 10, 12, 13, 12, 10, 8, 6];
+  const actualSizes = [
+    Number(css.match(/\.meteorTail \{[^}]*width: (\d+)px/)[1]),
+    ...Array.from({ length: 8 }, (_, index) => Number(css.match(new RegExp(`\\.meteorTail:nth-of-type\\(${index + 2}\\) \\{[^}]*width: (\\d+)px`))[1])),
+  ];
+  assert.deepEqual(actualSizes, expectedSizes);
+  assert.match(css, /--gold: #d8c79e; --rose: #d8b8bb;/);
+  assert.match(css, /\.site\[data-section="ABOUT"\]/);
+  assert.match(css, /\.pageIntro \{ background: color-mix/);
+  assert.match(css, /\.verticalTimeline article \{ --timeline-tone:/);
+  assert.match(css, /\.articleRow \{ --row-tone:/);
+  assert.match(css, /\.readerHeader \{ background: color-mix/);
+  assert.match(css, /\.siteFooter \{ background: color-mix/);
 });
 
 test("the meteor trail elastically catches up along the exact historic path", async () => {
