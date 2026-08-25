@@ -64,16 +64,17 @@ test("every public route includes the headless meteor trail", async () => {
     const html = await response.text();
     assert.match(html, /class="pointerField"/, path);
     assert.doesNotMatch(html, /class="meteorHead"/, path);
-    assert.equal((html.match(/class="meteorTail"/g) ?? []).length, 5, path);
-    assert.match(html, /src="\/pointer-field\.js\?v=path-1"/, path);
+    assert.equal((html.match(/class="meteorTail"/g) ?? []).length, 9, path);
+    assert.match(html, /src="\/pointer-field\.js\?v=flow-1"/, path);
   }
 });
 
-test("the meteor trail samples the exact historic path, fades after idle, and clears on leave", async () => {
+test("the meteor trail elastically catches up along the exact historic path", async () => {
   const listeners = {};
   const rootListeners = {};
   const field = { dataset: {} };
-  const tail = Array.from({ length: 5 }, () => ({ style: {}, dataset: {} }));
+  const tail = Array.from({ length: 9 }, () => ({ style: {}, dataset: {} }));
+  let frameCallback;
   let idleCallback;
   const window = {
     matchMedia: () => ({ matches: false }),
@@ -88,6 +89,7 @@ test("the meteor trail samples the exact historic path, fades after idle, and cl
   runInNewContext(source, {
     window,
     document,
+    requestAnimationFrame: (callback) => { frameCallback = callback; return 1; },
     setTimeout: (callback) => { idleCallback = callback; return 1; },
     clearTimeout: () => {},
     Math,
@@ -97,19 +99,27 @@ test("the meteor trail samples the exact historic path, fades after idle, and cl
   assert.equal(field.dataset.visible, "true");
   listeners.pointermove({ clientX: 100, clientY: 0 });
   listeners.pointermove({ clientX: 100, clientY: 100 });
-  assert.deepEqual(tail.map((square) => square.style.transform), [
-    "translate3d(100px, 82px, 0)",
-    "translate3d(100px, 60px, 0)",
-    "translate3d(100px, 34px, 0)",
-    "translate3d(100px, 4px, 0)",
-    "translate3d(70px, 0px, 0)",
-  ]);
-  assert.deepEqual(tail.map((square) => square.dataset.ready), ["true", "true", "true", "true", "true"]);
+  frameCallback(16);
+
+  const pathProgress = (transform) => {
+    const [, x, y] = transform.match(/translate3d\(([\d.]+)px, ([\d.]+)px, 0\)/).map(Number);
+    assert.ok((y === 0 && x >= 0 && x <= 100) || (x === 100 && y >= 0 && y <= 100), transform);
+    return y === 0 ? x : 100 + y;
+  };
+  const earlyProgress = tail.map((square) => pathProgress(square.style.transform));
+  assert.equal(new Set(earlyProgress).size, 9, "squares should follow at different elastic rates");
+
+  for (let frame = 2; frame <= 32; frame += 1) frameCallback(frame * 16);
+  const laterProgress = tail.map((square) => pathProgress(square.style.transform));
+  laterProgress.forEach((progress, index) => assert.ok(progress > earlyProgress[index], `square ${index} should catch up`));
+  assert.ok(laterProgress.every((progress) => progress > 100), "all squares should flow through the corner instead of cutting across it");
+  assert.deepEqual(tail.map((square) => square.dataset.ready), Array(9).fill("true"));
+
   idleCallback();
   assert.equal(field.dataset.visible, "false");
   rootListeners.mouseleave();
   assert.equal(field.dataset.visible, "false");
-  assert.deepEqual(tail.map((square) => square.dataset.ready), ["false", "false", "false", "false", "false"]);
+  assert.deepEqual(tail.map((square) => square.dataset.ready), Array(9).fill("false"));
 });
 
 test("every Chinese route uses the correct name", async () => {

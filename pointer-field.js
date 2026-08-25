@@ -1,74 +1,120 @@
 (() => {
-  if (window.__wzPathTrailV1) return;
-  window.__wzPathTrailV1 = true;
+  if (window.__wzFlowTrailV1) return;
+  window.__wzFlowTrailV1 = true;
   if (window.matchMedia("(pointer: coarse), (prefers-reduced-motion: reduce)").matches) return;
+
   const field = document.querySelector(".pointerField");
   const tail = [...document.querySelectorAll(".meteorTail")];
   if (!field || !tail.length) return;
 
-  const distances = [18, 40, 66, 96, 130];
-  const maxPathLength = distances.at(-1) + 80;
+  const followRates = [14, 11.5, 9.5, 8, 6.8, 5.8, 4.9, 4.1, 3.4];
   const path = [];
-  let pathLength = 0;
+  const particles = tail.map(() => ({ progress: 0 }));
+  let headProgress = 0;
+  let initialized = false;
+  let running = false;
+  let lastFrame = 0;
   let idleTimer;
 
   const appendPoint = (x, y) => {
     const previous = path.at(-1);
     if (previous?.x === x && previous?.y === y) return;
-    if (previous) pathLength += Math.hypot(x - previous.x, y - previous.y);
-    path.push({ x, y });
-
-    while (path.length > 2) {
-      const firstSegment = Math.hypot(path[1].x - path[0].x, path[1].y - path[0].y);
-      if (pathLength - firstSegment < maxPathLength && path.length <= 500) break;
-      pathLength -= firstSegment;
-      path.shift();
-    }
+    if (previous) headProgress += Math.hypot(x - previous.x, y - previous.y);
+    path.push({ x, y, progress: headProgress });
   };
 
-  const pointAtDistance = (distance) => {
-    let travelled = 0;
+  const pointAtProgress = (progress) => {
+    if (!path.length) return null;
+    if (progress <= path[0].progress) return path[0];
+
     for (let index = path.length - 1; index > 0; index -= 1) {
       const current = path[index];
       const previous = path[index - 1];
-      const segmentLength = Math.hypot(current.x - previous.x, current.y - previous.y);
-      if (travelled + segmentLength >= distance) {
-        const ratio = segmentLength ? (distance - travelled) / segmentLength : 0;
-        return {
-          x: current.x + (previous.x - current.x) * ratio,
-          y: current.y + (previous.y - current.y) * ratio,
-        };
-      }
-      travelled += segmentLength;
+      if (progress < previous.progress) continue;
+      const segmentLength = current.progress - previous.progress;
+      const ratio = segmentLength ? (progress - previous.progress) / segmentLength : 0;
+      return {
+        x: previous.x + (current.x - previous.x) * ratio,
+        y: previous.y + (current.y - previous.y) * ratio,
+      };
     }
-    return null;
+    return path.at(-1);
   };
 
-  const renderPath = () => {
-    distances.forEach((distance, index) => {
-      const point = pointAtDistance(distance);
-      tail[index].dataset.ready = String(Boolean(point));
-      if (!point) return;
-      const x = Math.round(point.x * 10) / 10;
-      const y = Math.round(point.y * 10) / 10;
-      tail[index].style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  const placeSquare = (square, point) => {
+    square.dataset.ready = String(Boolean(point));
+    if (!point) return;
+    const x = Math.round(point.x * 10) / 10;
+    const y = Math.round(point.y * 10) / 10;
+    square.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  };
+
+  const trimPath = () => {
+    const slowestProgress = Math.min(...particles.map((particle) => particle.progress));
+    while (path.length > 2 && path[1].progress < slowestProgress - 24) path.shift();
+  };
+
+  const render = (timestamp) => {
+    if (!initialized) {
+      running = false;
+      return;
+    }
+
+    const elapsed = lastFrame ? (timestamp - lastFrame) / 1000 : 1 / 60;
+    const delta = Math.min(Math.max(elapsed, 0), 0.05);
+    lastFrame = timestamp;
+    let stillCatchingUp = false;
+
+    particles.forEach((particle, index) => {
+      const gap = headProgress - particle.progress;
+      if (gap > 0.05) {
+        particle.progress += gap * (1 - Math.exp(-followRates[index] * delta));
+        stillCatchingUp = true;
+      } else {
+        particle.progress = headProgress;
+      }
+      placeSquare(tail[index], pointAtProgress(particle.progress));
     });
+
+    trimPath();
+    if (field.dataset.visible === "true" || stillCatchingUp) {
+      requestAnimationFrame(render);
+    } else {
+      running = false;
+    }
+  };
+
+  const startAnimation = () => {
+    if (running) return;
+    running = true;
+    lastFrame = 0;
+    requestAnimationFrame(render);
   };
 
   window.addEventListener("pointermove", (event) => {
     const samples = event.getCoalescedEvents?.() ?? [];
     (samples.length ? samples : [event]).forEach((sample) => appendPoint(sample.clientX, sample.clientY));
-    renderPath();
+
+    if (!initialized) {
+      initialized = true;
+      particles.forEach((particle, index) => {
+        particle.progress = headProgress;
+        placeSquare(tail[index], path.at(-1));
+      });
+    }
+
     field.dataset.visible = "true";
     clearTimeout(idleTimer);
-    idleTimer = setTimeout(() => { field.dataset.visible = "false"; }, 240);
+    idleTimer = setTimeout(() => { field.dataset.visible = "false"; }, 420);
+    startAnimation();
   }, { passive: true });
 
   document.documentElement.addEventListener("mouseleave", () => {
     clearTimeout(idleTimer);
     field.dataset.visible = "false";
     path.length = 0;
-    pathLength = 0;
+    headProgress = 0;
+    initialized = false;
     tail.forEach((square) => { square.dataset.ready = "false"; });
   });
 })();
