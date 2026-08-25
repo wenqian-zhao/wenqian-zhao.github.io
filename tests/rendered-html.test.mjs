@@ -11,11 +11,11 @@ const routes = [
   ["/work", /PROFESSIONAL CASES/],
   ["/writing", /ORIGINAL WORDPRESS SITE/],
   ...writings.map((writing) => [`/writing/${writing.slug}`, new RegExp(writing.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))]),
-  ["/zh", /选择一扇门/],
-  ["/zh/about", /我为语言模型/],
-  ["/zh/experience", /走过的/],
+  ["/zh", /把模型的问题/],
+  ["/zh/about", /我给大模型做数据/],
+  ["/zh/experience", /一路/],
   ["/zh/work", /职业项目/],
-  ["/zh/writing", /原 WORDPRESS 网站/],
+  ["/zh/writing", /还没想完的事/],
   ...writings.map((writing) => [`/zh/writing/${writing.slug}`, new RegExp(writing.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))]),
 ];
 
@@ -49,6 +49,18 @@ test("detail pages provide distinct document titles", async () => {
     );
     const html = await response.text();
     assert.doesNotMatch(html, /<title>Wenqian Zhao — Data Scientist &amp; Writer<\/title>/, path);
+  }
+});
+
+test("both home pages include the pointer-driven motion layer", async () => {
+  const worker = await loadWorker();
+  for (const path of ["/", "/zh"]) {
+    const response = await worker.fetch(
+      new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }),
+      { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+      { waitUntil() {}, passThroughOnException() {} },
+    );
+    assert.match(await response.text(), /class="pointerField"/, path);
   }
 });
 

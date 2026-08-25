@@ -51,12 +51,15 @@ async function waitForPage() {
 }
 
 function makeStatic(html) {
-  return html
+  const staticHtml = html
     .replaceAll("http://localhost:3000", publicUrl)
     .replaceAll("http://127.0.0.1:3000", publicUrl)
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
     .replace(/<link\b(?=[^>]*rel=["']modulepreload["'])[^>]*>/gi, "")
     .replace(/\sdata-rsc-css-href=["'][^"']*["']/gi, "");
+  return staticHtml.includes('class="pointerField"')
+    ? staticHtml.replace("</body>", '<script src="/pointer-field.js" defer></script></body>')
+    : staticHtml;
 }
 
 try {
@@ -78,6 +81,7 @@ try {
     writeFile(".nojekyll", ""),
     cp("public/og.png", "og.png"),
     cp("public/favicon.svg", "favicon.svg"),
+    cp("public/pointer-field.js", "pointer-field.js"),
     cp("public/writing-assets", "writing-assets", { recursive: true }),
   ]);
 } finally {

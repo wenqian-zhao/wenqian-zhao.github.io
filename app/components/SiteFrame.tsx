@@ -30,7 +30,7 @@ export function SiteFrame({ active, children, locale = "en", alternateHref }: { 
         </header>
         {children}
         <footer className="siteFooter">
-          <div><p>{isChinese ? "如果这个问题足够有趣，" : "IF THE QUESTION IS INTERESTING,"}</p><a href="mailto:wez0012@outlook.com">{isChinese ? "来聊聊吧" : "LET’S TALK"} ↗</a></div>
+          <div><p>{isChinese ? "想聊点有意思的？" : "IF THE QUESTION IS INTERESTING,"}</p><a href="mailto:wez0012@outlook.com">{isChinese ? "给我写信" : "LET’S TALK"} ↗</a></div>
           <div className="footerLinks">
             <a href="https://github.com/wenqian-zhao" target="_blank" rel="noreferrer">GITHUB ↗</a>
             <a href="https://wenqianzhao.wordpress.com/" target="_blank" rel="noreferrer">WORDPRESS ↗</a>
