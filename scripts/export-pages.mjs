@@ -1,8 +1,23 @@
 import { spawn } from "node:child_process";
-import { cp, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, rm, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
 
-const localUrl = "http://127.0.0.1:3000/";
+const localOrigin = "http://127.0.0.1:3000";
 const publicUrl = "https://wenqian-zhao.github.io";
+const routes = [
+  ["/", "index.html"],
+  ["/about/", "about/index.html"],
+  ["/experience/", "experience/index.html"],
+  ["/work/", "work/index.html"],
+  ["/writing/", "writing/index.html"],
+];
+
+await Promise.all([
+  rm("index.html", { force: true }),
+  rm("404.html", { force: true }),
+  rm("_next", { recursive: true, force: true }),
+  ...routes.slice(1).map(([, output]) => rm(dirname(output), { recursive: true, force: true })),
+]);
 
 const server = spawn("npm", ["run", "start"], {
   env: { ...process.env, NO_PROXY: "127.0.0.1,localhost" },
@@ -16,8 +31,8 @@ server.stderr.on("data", (chunk) => { serverOutput += chunk.toString(); });
 async function waitForPage() {
   for (let attempt = 0; attempt < 120; attempt += 1) {
     try {
-      const response = await fetch(localUrl);
-      if (response.ok) return response;
+      const response = await fetch(`${localOrigin}/`);
+      if (response.ok) return;
     } catch {
       // The local production server is still starting.
     }
@@ -26,29 +41,31 @@ async function waitForPage() {
   throw new Error(`Production preview did not start.\n${serverOutput}`);
 }
 
-try {
-  const response = await waitForPage();
-  let html = await response.text();
-
-  html = html
+function makeStatic(html) {
+  return html
     .replaceAll("http://localhost:3000", publicUrl)
     .replaceAll("http://127.0.0.1:3000", publicUrl)
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
     .replace(/<link\b(?=[^>]*rel=["']modulepreload["'])[^>]*>/gi, "")
     .replace(/\sdata-rsc-css-href=["'][^"']*["']/gi, "");
+}
 
-  await Promise.all([
-    writeFile("dist/client/index.html", html),
-    writeFile("dist/client/404.html", html),
-    writeFile("dist/client/.nojekyll", ""),
-  ]);
+try {
+  await waitForPage();
+  const rendered = await Promise.all(routes.map(async ([route, output]) => {
+    const response = await fetch(`${localOrigin}${route}`);
+    if (!response.ok) throw new Error(`Could not render ${route}: ${response.status}`);
+    return [output, makeStatic(await response.text())];
+  }));
 
-  await rm("_next", { recursive: true, force: true });
+  for (const [output, html] of rendered) {
+    await mkdir(dirname(output), { recursive: true });
+    await writeFile(output, html);
+  }
+
   await cp("dist/client/_next", "_next", { recursive: true });
-
   await Promise.all([
-    writeFile("index.html", html),
-    writeFile("404.html", html),
+    writeFile("404.html", rendered[0][1]),
     writeFile(".nojekyll", ""),
     cp("public/og.png", "og.png"),
     cp("public/favicon.svg", "favicon.svg"),

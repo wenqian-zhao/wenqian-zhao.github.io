@@ -13,18 +13,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wenqian Zhao — Data Scientist & Writer",
-  description: "Wenqian Zhao explores better ways to understand machines and ourselves through data, AI, and writing.",
+  title: "Wenqian Zhao — LLM Data Engineer & Writer",
+  description: "Wenqian Zhao works on LLM data engineering, algorithm engineering, and writing about AI, taste, and life.",
   openGraph: {
-    title: "Wenqian Zhao — Data Scientist & Writer",
-    description: "Exploring better ways to understand machines and ourselves.",
+    title: "Wenqian Zhao — LLM Data Engineer & Writer",
+    description: "Data, models, and the questions around them.",
     type: "website",
-    images: [{ url: "/og.png", width: 1732, height: 908, alt: "Wenqian Zhao — Data scientist, AI builder, and writer" }],
+    images: [{ url: "/og.png", width: 1732, height: 908, alt: "Wenqian Zhao — LLM data engineer and writer" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Wenqian Zhao — Data Scientist & Writer",
-    description: "Exploring better ways to understand machines and ourselves.",
+    title: "Wenqian Zhao — LLM Data Engineer & Writer",
+    description: "Data, models, and the questions around them.",
     images: ["/og.png"],
   },
   icons: {
