@@ -1,5 +1,6 @@
 ---
 title: A Thinking on Different LMs
+slug: a-thinking-on-different-lms
 date: 2025-11-16
 category: AI
 description: Autoregressive models write forward. Diffusion models begin with a shape, then refine.
@@ -15,14 +16,12 @@ description: Autoregressive models write forward. Diffusion models begin with a 
 
 那么我现在面临的问题是什么呢？现在没有什么针对 DLM 场景的 benchmarks，大部分的 bench 还是服务于 AR 模型，例如 MMLU 这种选择题，模型不需要在生成后文后对前文进行反复的修改，因此也就没办法完全展现 DLM 的能力。因此现在需要的是一个针对于 DLM 这种生成方式的 benchmark 可以展现 DLM 的优势，并且可以客观地评价 DLM 的能力。
 
-## 什么是好的 benchmark？
-
 首先回到 benchmarks 本身，什么是好的 benchmarks，现在我们见到的 benchmarks 有什么问题呢？
 
-1. **题目泄漏和刷榜危机：**由于最早的一批 benchmarks 已经是过去式了，MMLU 是 2020 年 released 的测试集，而 “PRO” 版的 MMLU-PRO 也已经是 2024 年中旬的工作。相关题目的讨论、研究、批评、褒奖，连带着原题和答案，都已经在公开互联网上被无数次讨论。这种情况会导致模型实际上并非在答题，而是在预训练语料中检索答案。同时，很多 benchmarks 强调“可验证”性，例如多选题、输出某个数字答案的数学题等。这类 benchmarks 即使在一定程度上有效，也很容易通过 RL 的方式被刷榜，导致当前模型的评测分数被极度 inflated。
+1. 题目泄漏和刷榜危机：由于最早的一批 benchmarks 已经是过去式了，MMLU 是 2020 年 released 的测试集，而 “PRO” 版的 MMLU-PRO 也已经是2024年中旬的工作，对于相关题目的讨论、研究、批评、褒奖，连带着原题的题目，都已经在公开互联网上携带着原题和答案被无数次讨论。这种情况会导致模型实际上并非在答题，而是在预训练语料中检索答案。同时，在很多的工作中，benchmarks 都很强调“可验证”性，例如多选题、输出某个数字答案的数学题等，这种 benchmarks 即使在一定程度上是有效的，但是他们很容易通过 RL 的方式被刷榜，从而导致当前模型的评测分数是极度被 inflated 的。
 
 ---
 
 已经退出这个项目了，做了一些 benchmark 发现 DLLM 就是个 tmd 彻头彻尾的骗局！！！！！（至少我们没做出来）
 
-有什么其他的思考我再继续补吧，有时间。Lemme publish all things above for now.
+有什么其他的思考我在继续补吧有时间，lemme publish all things above for now

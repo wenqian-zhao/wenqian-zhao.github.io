@@ -18,6 +18,7 @@ await Promise.all([
   rm("index.html", { force: true }),
   rm("404.html", { force: true }),
   rm("_next", { recursive: true, force: true }),
+  rm("writing-assets", { recursive: true, force: true }),
   ...[...new Set(routes.slice(1).map(([, output]) => dirname(output)))].map((outputDir) => rm(outputDir, { recursive: true, force: true })),
 ]);
 
@@ -71,6 +72,7 @@ try {
     writeFile(".nojekyll", ""),
     cp("public/og.png", "og.png"),
     cp("public/favicon.svg", "favicon.svg"),
+    cp("public/writing-assets", "writing-assets", { recursive: true }),
   ]);
 } finally {
   server.kill("SIGTERM");

@@ -20,7 +20,7 @@ export default function WritingPage() {
             <span>{String(index + 1).padStart(2, "0")}</span><div><h2>{writing.title}</h2><p>{writing.description}</p></div><span>{writing.category}<br />{writing.date}</span><span>→</span>
           </a>
         ))}
-        <a className="archiveButton" href="https://wenqianzhao.wordpress.com/" target="_blank" rel="noreferrer">COMPLETE WORDPRESS ARCHIVE <span>↗</span></a>
+        <a className="archiveButton" href="https://wenqianzhao.wordpress.com/" target="_blank" rel="noreferrer">ORIGINAL WORDPRESS SITE <span>↗</span></a>
       </section>
     </SiteFrame>
   );

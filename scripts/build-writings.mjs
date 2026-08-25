@@ -11,11 +11,18 @@ function escapeHtml(value) {
 
 function inlineMarkdown(value) {
   const code = [];
+  const images = [];
   let html = escapeHtml(value).replace(/`([^`]+)`/g, (_, text) => {
     code.push(`<code>${text}</code>`);
     return `%%CODE${code.length - 1}%%`;
   });
   html = html
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => {
+      const decodedSrc = src.replaceAll("&amp;", "&");
+      if (!/^(https?:\/\/|\/)/.test(decodedSrc)) return alt;
+      images.push(`<img src="${src}" alt="${alt}" loading="lazy">`);
+      return `%%IMAGE${images.length - 1}%%`;
+    })
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, href) => {
       const decodedHref = href.replaceAll("&amp;", "&");
       const safeHref = /^(https?:\/\/|mailto:|\/)/.test(decodedHref) ? href : "#";
@@ -23,6 +30,7 @@ function inlineMarkdown(value) {
     })
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
     .replace(/\*([^*]+)\*/g, "<em>$1</em>")
+    .replace(/%%IMAGE(\d+)%%/g, (_, index) => images[Number(index)])
     .replace(/%%CODE(\d+)%%/g, (_, index) => code[Number(index)]);
   return html;
 }
@@ -128,7 +136,7 @@ function parseMarkdown(source, fileName) {
   }
   const slug = meta.slug || basename(fileName, extname(fileName));
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) throw new Error(`${fileName}: slug must be lowercase kebab-case`);
-  const plainText = match[2].replace(/[#>*_`\[\]()-]/g, " ").replace(/\s+/g, " ").trim();
+  const plainText = match[2].replace(/[#>*_`()]/g, " ").replaceAll("[", " ").replaceAll("]", " ").replaceAll("-", " ").replace(/\s+/g, " ").trim();
   return {
     slug,
     title: meta.title,

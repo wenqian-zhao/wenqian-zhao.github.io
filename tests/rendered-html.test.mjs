@@ -1,14 +1,16 @@
 import assert from "node:assert/strict";
+import { access, readFile } from "node:fs/promises";
+import { join } from "node:path";
 import test from "node:test";
 
+const writings = JSON.parse(await readFile(new URL("../app/generated-writings.json", import.meta.url), "utf8"));
 const routes = [
   ["/", /CHOOSE A DOOR/],
   ["/about", /Data, models/],
   ["/experience", /Saint George/],
   ["/work", /PROFESSIONAL CASES/],
-  ["/writing", /COMPLETE WORDPRESS ARCHIVE/],
-  ["/writing/a-thinking-on-different-lms", /什么是好的 benchmark/],
-  ["/writing/why-taste-is-a-thing", /不可替代的人/],
+  ["/writing", /ORIGINAL WORDPRESS SITE/],
+  ...writings.map((writing) => [`/writing/${writing.slug}`, new RegExp(writing.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))]),
 ];
 
 async function loadWorker() {
@@ -44,15 +46,24 @@ test("detail pages provide distinct document titles", async () => {
   }
 });
 
-test("writing detail metadata is derived from its Markdown file", async () => {
+test("writing detail metadata is derived from every Markdown file", async () => {
   const worker = await loadWorker();
-  const response = await worker.fetch(
-    new Request("http://localhost/writing/a-thinking-on-different-lms", { headers: { accept: "text/html" } }),
-    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
-    { waitUntil() {}, passThroughOnException() {} },
-  );
-  const html = await response.text();
-  assert.match(html, /<title>A Thinking on Different LMs — Wenqian Zhao<\/title>/);
-  assert.match(html, /Autoregressive models write forward/);
-  assert.doesNotMatch(html, /og:image|twitter:image/);
+  for (const writing of writings) {
+    const response = await worker.fetch(
+      new Request(`http://localhost/writing/${writing.slug}`, { headers: { accept: "text/html" } }),
+      { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+      { waitUntil() {}, passThroughOnException() {} },
+    );
+    const html = await response.text();
+    assert.match(html, new RegExp(`<title>${writing.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} — Wenqian Zhao<\\/title>`), writing.slug);
+    assert.match(html, /class="markdownBody"/, writing.slug);
+    assert.doesNotMatch(html, /og:image|twitter:image/, writing.slug);
+  }
+});
+
+test("the complete WordPress inventory and its images are local", async () => {
+  assert.equal(writings.length, 6);
+  const imagePaths = writings.flatMap((writing) => [...writing.html.matchAll(/<img src="([^"]+)"/g)].map((match) => match[1]));
+  assert.equal(imagePaths.length, 13);
+  for (const imagePath of imagePaths) await access(join(process.cwd(), "public", imagePath.replace(/^\//, "")));
 });
