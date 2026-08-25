@@ -1,0 +1,48 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Wenqian Zhao — Data Scientist & Writer",
+  description: "Data science, language models, product thinking, and notes by Wenqian Zhao.",
+  openGraph: {
+    title: "Wenqian Zhao — Data Scientist & Writer",
+    description: "Ideas, models, and useful things by Wenqian Zhao.",
+    type: "website",
+    images: [{ url: "/og.png", width: 1731, height: 909, alt: "Wenqian Zhao — Data scientist, AI builder, and writer" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Wenqian Zhao — Data Scientist & Writer",
+    description: "Ideas, models, and useful things by Wenqian Zhao.",
+    images: ["/og.png"],
+  },
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        {children}
+      </body>
+    </html>
+  );
+}
