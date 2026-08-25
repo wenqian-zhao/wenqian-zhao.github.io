@@ -50,6 +50,32 @@ a { color: inherit; text-decoration: none; }
 
 .siteFooter { min-height: 330px; position: relative; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 50px; padding: 70px max(28px, 6vw); border-top: 1px solid var(--ink); font-family: var(--font-geist-mono), monospace; }.siteFooter p { margin: 0 0 18px; font-size: 8px; letter-spacing: .16em; }.siteFooter > div:first-child > a { font-family: Georgia, serif; font-size: clamp(42px, 6vw, 82px); font-style: italic; border-bottom: 2px dotted currentColor; }.footerLinks { display: grid; gap: 20px; font-size: 9px; letter-spacing: .14em; }.footerMeta { position: absolute; right: max(28px, 6vw); bottom: 25px; margin: 0 !important; }
 
+@media (min-width: 851px) {
+  .homeHero h1 { max-width: 980px; font-size: clamp(38px, 5vw, 70px); line-height: 1.04; letter-spacing: -.045em; }
+  .roomCard i { font-size: 78px; }
+  .roomCard h2 { font-size: clamp(28px, 2.6vw, 42px); letter-spacing: -.035em; }
+  .roomCard p { font-size: 13px; }
+  .pageIntro { min-height: 520px; padding-top: 100px; padding-bottom: 75px; }
+  .pageIntro h1 { font-size: clamp(54px, 6.5vw, 100px); line-height: .86; letter-spacing: -.055em; }
+  .pageIntro > p:last-child { font-size: 15px; line-height: 1.55; }
+  .timelineBody h2 { font-size: clamp(32px, 3.5vw, 52px); line-height: 1.05; letter-spacing: -.04em; }
+  .timelineBody h3 { font-size: 9px; }
+  .timelineBody > p { font-size: 15px; line-height: 1.6; }
+  .timelineMark { font-size: 40px; }
+  .aboutLead, .interestStrip { padding-top: 120px; padding-bottom: 120px; }
+  .aboutLead h2, .interestStrip h2, .buildSection > div:first-child h2 { font-size: clamp(44px, 5.2vw, 76px); line-height: .98; letter-spacing: -.045em; }
+  .aboutLead > div > p { max-width: 760px; margin-top: 42px; font-size: 17px; line-height: 1.65; }
+  .factsGrid strong { font-size: clamp(34px, 3vw, 48px); letter-spacing: -.035em; }
+  .interestStrip > p:last-child { font-size: 15px; line-height: 1.6; }
+  .caseCard > i { height: 210px; font-size: 84px; }
+  .caseCard h2 { font-size: clamp(31px, 2.8vw, 43px); line-height: 1.03; letter-spacing: -.04em; }
+  .caseCard > p { font-size: 14px; line-height: 1.55; }
+  .buildList h3 { font-size: clamp(22px, 2.1vw, 32px); letter-spacing: -.03em; }
+  .articleRow h2 { font-size: clamp(24px, 2.5vw, 36px); letter-spacing: -.035em; }
+  .articleRow p { font-size: 13px; }
+  .siteFooter > div:first-child > a { font-size: clamp(36px, 4.5vw, 62px); }
+}
+
 @media (max-width: 850px) {
   .siteHeader { grid-template-columns: 70px 1fr 70px; padding: 12px 18px; }.siteNav { gap: 18px; }.siteNav a:nth-child(2) { display: none; }
   .roomGrid { grid-template-columns: repeat(2, 1fr); }.roomCard:nth-child(2) { border-right: 0; }.roomCard:nth-child(-n+2) { border-bottom: 1px solid var(--ink); }
