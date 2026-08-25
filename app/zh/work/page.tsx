@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SiteFrame } from "../../components/SiteFrame";
 import { earlierBuilds } from "../../site-data";
 
-export const metadata: Metadata = { title: "代表项目 — 赵文茜", description: "做过的项目，解决过的问题。", openGraph: { title: "代表项目 — 赵文茜", description: "做过的事，以及它们为什么值得做。", images: [] }, twitter: { card: "summary", title: "代表项目 — 赵文茜", description: "做过的事，以及它们为什么值得做。", images: [] } };
+export const metadata: Metadata = { title: "代表项目 — 赵文千", description: "做过的项目，解决过的问题。", openGraph: { title: "代表项目 — 赵文千", description: "做过的事，以及它们为什么值得做。", images: [] }, twitter: { card: "summary", title: "代表项目 — 赵文千", description: "做过的事，以及它们为什么值得做。", images: [] } };
 const projects = [
   { number: "01", company: "蚂蚁集团 · 2026.04 — 2026.07", title: "LLaDA：数据与推理", summary: "160 万条开源 SFT 数据里为什么会出现 loss spike？我从数据诊断入手，也尝试把推理蒸馏用到扩散语言模型上，并继续追问数据分布和推理策略之间的关系。", result: "目标分布实验中，代码和数学 benchmark 提升 3%–5%。", mark: "∿", tone: "violet" },
   { number: "02", company: "蚂蚁集团 · 2025.12 — 2026.01", title: "让医疗模型记住用户", summary: "“记住一个人”很难直接验对错。我把它拆成 34 个具体场景，再用 must / optional / overthink 三类标准告诉模型：什么必须记住，什么不必多想。", result: "最终产出 10,000+ 组用于 RL 的 Query–Rubric 数据。", mark: "✣", tone: "peach" },

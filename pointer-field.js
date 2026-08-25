@@ -1,4 +1,6 @@
 (() => {
+  if (window.__wzPixelFieldV2) return;
+  window.__wzPixelFieldV2 = true;
   if (window.matchMedia("(pointer: coarse), (prefers-reduced-motion: reduce)").matches) return;
   const field = document.querySelector(".pointerField");
   const core = document.querySelector(".pixelCore");

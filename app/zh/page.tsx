@@ -3,10 +3,10 @@ import { SiteFrame } from "../components/SiteFrame";
 import { PointerField } from "../components/PointerField";
 
 export const metadata: Metadata = {
-  title: "赵文茜 — 大模型数据工程师与写作者",
-  description: "赵文茜做大模型数据与算法，也写 AI、品味和生活。",
-  openGraph: { title: "赵文茜 — 大模型数据工程师与写作者", description: "把模型的问题，变成数据能回答的问题。", images: [{ url: "/og.png" }] },
-  twitter: { card: "summary_large_image", title: "赵文茜 — 大模型数据工程师与写作者", description: "把模型的问题，变成数据能回答的问题。", images: ["/og.png"] },
+  title: "赵文千 — 大模型数据工程师与写作者",
+  description: "赵文千做大模型数据与算法，也写 AI、品味和生活。",
+  openGraph: { title: "赵文千 — 大模型数据工程师与写作者", description: "把模型的问题，变成数据能回答的问题。", images: [{ url: "/og.png" }] },
+  twitter: { card: "summary_large_image", title: "赵文千 — 大模型数据工程师与写作者", description: "把模型的问题，变成数据能回答的问题。", images: ["/og.png"] },
 };
 
 const rooms = [

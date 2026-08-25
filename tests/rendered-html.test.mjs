@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import test from "node:test";
+import { runInNewContext } from "node:vm";
 
 const writings = JSON.parse(await readFile(new URL("../app/generated-writings.json", import.meta.url), "utf8"));
 const routes = [
@@ -64,6 +65,67 @@ test("both home pages include the pointer-driven motion layer", async () => {
     assert.match(html, /class="pointerField"/, path);
     assert.match(html, /class="pixelCore"/, path);
     assert.equal((html.match(/class="pixelSquare"/g) ?? []).length, 9, path);
+    assert.match(html, /src="\/pointer-field\.js\?v=pixel-2"/, path);
+  }
+});
+
+test("the pixel-motion script responds to move, hover, and click", async () => {
+  const listeners = {};
+  const documentListeners = {};
+  const rootListeners = {};
+  const field = { dataset: {} };
+  const core = { style: {} };
+  const squares = Array.from({ length: 9 }, () => ({ style: {} }));
+  let frame;
+  let timer;
+  const window = {
+    innerWidth: 1200,
+    innerHeight: 800,
+    matchMedia: () => ({ matches: false }),
+    addEventListener: (type, handler) => { listeners[type] = handler; },
+  };
+  const document = {
+    querySelector: (selector) => selector === ".pointerField" ? field : selector === ".pixelCore" ? core : null,
+    querySelectorAll: () => squares,
+    addEventListener: (type, handler) => { documentListeners[type] = handler; },
+    documentElement: { addEventListener: (type, handler) => { rootListeners[type] = handler; } },
+  };
+  const source = await readFile(new URL("../public/pointer-field.js", import.meta.url), "utf8");
+  runInNewContext(source, {
+    window,
+    document,
+    requestAnimationFrame: (callback) => { frame = callback; return 1; },
+    setTimeout: (callback) => { timer = callback; return 1; },
+    clearTimeout: () => {},
+    Math,
+  });
+
+  listeners.pointermove({ clientX: 240, clientY: 180 });
+  assert.equal(field.dataset.visible, "true");
+  assert.equal(core.style.transform, "translate3d(240px, 180px, 0)");
+  frame();
+  assert.match(squares[0].style.transform, /^translate3d\(/);
+  documentListeners.pointerover({ target: { closest: () => ({}) } });
+  assert.equal(field.dataset.hover, "true");
+  documentListeners.pointerdown();
+  assert.equal(field.dataset.burst, "true");
+  timer();
+  assert.equal(field.dataset.burst, "false");
+  rootListeners.mouseleave();
+  assert.equal(field.dataset.visible, "false");
+});
+
+test("every Chinese route uses the correct name", async () => {
+  const worker = await loadWorker();
+  for (const [path] of routes.filter(([path]) => path === "/zh" || path.startsWith("/zh/"))) {
+    const response = await worker.fetch(
+      new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }),
+      { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+      { waitUntil() {}, passThroughOnException() {} },
+    );
+    const html = await response.text();
+    assert.match(html, /赵文千/, path);
+    assert.doesNotMatch(html, /赵文茜/, path);
   }
 });
 
@@ -91,7 +153,7 @@ test("Chinese writing routes provide localized metadata and the same complete ar
       { waitUntil() {}, passThroughOnException() {} },
     );
     const html = await response.text();
-    assert.match(html, new RegExp(`<title>${writing.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} — 赵文茜<\\/title>`), writing.slug);
+    assert.match(html, new RegExp(`<title>${writing.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} — 赵文千<\\/title>`), writing.slug);
     assert.match(html, /阅读约[\s\S]{0,100}分钟/, writing.slug);
     assert.match(html, /class="markdownBody"/, writing.slug);
   }

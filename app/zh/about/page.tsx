@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SiteFrame } from "../../components/SiteFrame";
 
-export const metadata: Metadata = { title: "关于 — 赵文茜", description: "我做大模型数据与算法，也写点东西。", openGraph: { title: "关于 — 赵文茜", description: "我是谁，以及我在意什么。", images: [] }, twitter: { card: "summary", title: "关于 — 赵文茜", description: "我是谁，以及我在意什么。", images: [] } };
+export const metadata: Metadata = { title: "关于 — 赵文千", description: "我做大模型数据与算法，也写点东西。", openGraph: { title: "关于 — 赵文千", description: "我是谁，以及我在意什么。", images: [] }, twitter: { card: "summary", title: "关于 — 赵文千", description: "我是谁，以及我在意什么。", images: [] } };
 
 export default function ChineseAboutPage() {
   return <SiteFrame active="ABOUT" locale="zh">

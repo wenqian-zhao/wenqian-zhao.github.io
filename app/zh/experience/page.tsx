@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SiteFrame } from "../../components/SiteFrame";
 
-export const metadata: Metadata = { title: "经历 — 赵文茜", description: "从 Spokane 到 UCSD，再到 MiniMax 和蚂蚁集团。", openGraph: { title: "经历 — 赵文茜", description: "一路走来。", images: [] }, twitter: { card: "summary", title: "经历 — 赵文茜", description: "一路走来。", images: [] } };
+export const metadata: Metadata = { title: "经历 — 赵文千", description: "从 Spokane 到 UCSD，再到 MiniMax 和蚂蚁集团。", openGraph: { title: "经历 — 赵文千", description: "一路走来。", images: [] }, twitter: { card: "summary", title: "经历 — 赵文千", description: "一路走来。", images: [] } };
 const timeline = [
   { date: "2025.10 — 至今", place: "蚂蚁集团", location: "杭州", role: "研发工程师 · 算法工程师", summary: "做 LLaDA 和医疗模型的后训练数据。从 SFT 数据治理、训练诊断，到推理蒸馏、评测和 RL 数据生产。", mark: "✦" },
   { date: "2023.10 — 2025.09", place: "MiniMax", location: "上海", role: "数据科学家 → 数据算法工程师", summary: "先为模型迭代搭建评测和采样系统，后来转向预训练数据，负责 MiniMax-M2 的质量建模和数据分布优化。", mark: "∿" },

@@ -58,7 +58,7 @@ function makeStatic(html) {
     .replace(/<link\b(?=[^>]*rel=["']modulepreload["'])[^>]*>/gi, "")
     .replace(/\sdata-rsc-css-href=["'][^"']*["']/gi, "");
   return staticHtml.includes('class="pointerField"')
-    ? staticHtml.replace("</body>", '<script src="/pointer-field.js" defer></script></body>')
+    ? staticHtml.replace("</body>", '<script src="/pointer-field.js?v=pixel-2" defer></script></body>')
     : staticHtml;
 }
 
