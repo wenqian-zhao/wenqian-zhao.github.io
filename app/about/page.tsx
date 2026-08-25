@@ -11,21 +11,23 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <SiteFrame active="ABOUT">
-      <section className="pageIntro aboutIntro"><p className="eyebrow">01 / ABOUT</p><h1>Technical rigor,<br /><em>human taste.</em></h1><p>I care about the space where data becomes a decision, and where a capable model becomes a product people actually want to use.</p></section>
+      <section className="pageIntro aboutIntro"><p className="eyebrow">01 / ABOUT</p><h1>Data, models<br /><em>& good questions.</em></h1><p>I turn messy model behavior into data a team can inspect, measure, and improve.</p></section>
       <section className="aboutLead">
         <p className="sectionNumber">A / NOW</p>
-        <div><h2>I build the data systems<br />behind language models.</h2><p>My work spans pre-training quality modeling, data-distribution optimization, SFT governance, evaluation, and RL data production. I like turning fuzzy model behavior into something a team can inspect, measure, and improve.</p></div>
-      </section>
-      <section className="factsGrid" aria-label="Selected facts">
-        <article><span>01</span><strong>3.9 / 4.0</strong><p>UC San Diego<br />Data Science</p></article>
-        <article><span>02</span><strong>TB-scale</strong><p>pre-training corpus<br />quality systems</p></article>
-        <article><span>03</span><strong>10K+</strong><p>Query–Rubric pairs<br />delivered for RL</p></article>
-        <article><span>04</span><strong>12.6K+</strong><p>stars on the AISYS<br />open-source project</p></article>
+        <div>
+          <h2>I build data systems<br />for language models.</h2>
+          <p>My work covers pre-training quality, data-distribution optimization, SFT governance, evaluation, and RL data production—currently at Ant Group, after two years at MiniMax.</p>
+          <ul className="compactFacts" aria-label="Selected facts">
+            <li><strong>UCSD</strong><span>Data Science · 3.9/4.0</span></li>
+            <li><strong>TB-SCALE</strong><span>Pre-training corpora</span></li>
+            <li><strong>10K+</strong><span>Query–Rubric pairs</span></li>
+          </ul>
+        </div>
       </section>
       <section className="interestStrip">
         <p className="sectionNumber">B / OFF THE CLOCK</p>
-        <h2>Cello. Bass. Tennis.<br /><em>Formula 1. Good questions.</em></h2>
-        <p>Writing is how I slow ideas down long enough to understand them. Music and tennis do something similar—just without the dashboards.</p>
+        <h2>Music, tennis,<br /><em>and notes in between.</em></h2>
+        <p>Writing is how I slow ideas down long enough to understand them.</p>
       </section>
     </SiteFrame>
   );

@@ -1,25 +1,27 @@
 import { spawn } from "node:child_process";
-import { cp, mkdir, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 
-const localOrigin = "http://127.0.0.1:3000";
+const localOrigin = "http://127.0.0.1:3010";
 const publicUrl = "https://wenqian-zhao.github.io";
+const writings = JSON.parse(await readFile("app/generated-writings.json", "utf8"));
 const routes = [
   ["/", "index.html"],
   ["/about/", "about/index.html"],
   ["/experience/", "experience/index.html"],
   ["/work/", "work/index.html"],
   ["/writing/", "writing/index.html"],
+  ...writings.map(({ slug }) => [`/writing/${slug}/`, `writing/${slug}/index.html`]),
 ];
 
 await Promise.all([
   rm("index.html", { force: true }),
   rm("404.html", { force: true }),
   rm("_next", { recursive: true, force: true }),
-  ...routes.slice(1).map(([, output]) => rm(dirname(output), { recursive: true, force: true })),
+  ...[...new Set(routes.slice(1).map(([, output]) => dirname(output)))].map((outputDir) => rm(outputDir, { recursive: true, force: true })),
 ]);
 
-const server = spawn("npm", ["run", "start"], {
+const server = spawn("npm", ["run", "start", "--", "--port", "3010"], {
   env: { ...process.env, NO_PROXY: "127.0.0.1,localhost" },
   stdio: ["ignore", "pipe", "pipe"],
 });
